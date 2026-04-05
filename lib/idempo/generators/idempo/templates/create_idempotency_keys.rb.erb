@@ -1,0 +1,40 @@
+# frozen_string_literal: true
+
+class CreateIdempotencyKeys < ActiveRecord::Migration<%= migration_version %>
+  def change
+    create_table :idempotency_keys do |t|
+      # The client-supplied idempotency key (e.g. a UUID).
+      t.string   :key,             null: false, limit: 255
+
+      # Identifies the controller action or job/webhook class that handled the request.
+      t.string   :endpoint,        null: false, limit: 255
+
+      # SHA256 fingerprint of the original request body + content-type.
+      # Used to detect key reuse with a different payload.
+      t.string   :request_hash,    null: false, limit: 64
+
+      # The stored response, replayed verbatim on duplicate requests.
+      t.jsonb    :response_body
+
+      # HTTP status code of the original response.
+      t.integer  :response_status
+
+      # When true, a request is currently being processed (soft lock).
+      t.boolean  :locked,          null: false, default: false
+
+      # Records expire and are eligible for cleanup_expired! after this time.
+      t.datetime :expires_at,      null: false
+
+      t.timestamps null: false
+    end
+
+    # Primary lookup index — must be unique to enforce exactly-once semantics.
+    add_index :idempotency_keys, :key,        unique: true, name: "idx_idempotency_keys_key"
+
+    # Speeds up cleanup_expired! queries.
+    add_index :idempotency_keys, :expires_at, name: "idx_idempotency_keys_expires_at"
+
+    # Composite index for endpoint-scoped queries.
+    add_index :idempotency_keys, %i[endpoint expires_at], name: "idx_idempotency_keys_endpoint_expires"
+  end
+end

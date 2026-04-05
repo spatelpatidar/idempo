@@ -1,0 +1,202 @@
+# Idempo — RuboCop configuration
+# Compatible with rubocop ~> 1.60, rubocop-rails ~> 2.23, rubocop-rspec ~> 2.26
+#
+# Temporary exclusions live in .rubocop_todo.yml (auto-included below).
+# Run `rubocop --auto-gen-config` to regenerate it.
+
+inherit_from: .rubocop_todo.yml
+
+require:
+  - rubocop-rails
+  - rubocop-rspec
+
+AllCops:
+  NewCops: enable
+  TargetRubyVersion: 2.7
+  TargetRailsVersion: 6.0
+  SuggestExtensions: false
+  Exclude:
+    - "bin/**/*"
+    - "vendor/**/*"
+    - "tmp/**/*"
+    - "*.gemspec"
+
+# ── Style ────────────────────────────────────────────────────────────────────
+
+Style/StringLiterals:
+  Enabled: true
+  EnforcedStyle: double_quotes
+
+Style/StringLiteralsInInterpolation:
+  Enabled: true
+  EnforcedStyle: double_quotes
+
+Style/FrozenStringLiteralComment:
+  Enabled: true
+  EnforcedStyle: always
+
+Style/Documentation:
+  Enabled: false   # yard/rdoc handled separately
+
+Style/ClassAndModuleChildren:
+  Enabled: false   # nested modules read more cleanly for a gem
+
+Style/GuardClause:
+  Enabled: true
+  MinBodyLength: 2
+
+Style/ReturnNil:
+  Enabled: true
+
+Style/TrailingCommaInArgsList:
+  Enabled: true
+  EnforcedStyleForMultiline: comma
+
+Style/TrailingCommaInArrayLiteral:
+  Enabled: true
+  EnforcedStyleForMultiline: comma
+
+Style/TrailingCommaInHashLiteral:
+  Enabled: true
+  EnforcedStyleForMultiline: comma
+
+Style/SymbolArray:
+  Enabled: true
+  EnforcedStyle: percent
+
+Style/WordArray:
+  Enabled: true
+  EnforcedStyle: percent
+
+# ── Layout ───────────────────────────────────────────────────────────────────
+
+Layout/LineLength:
+  Max: 120
+  AllowedPatterns:
+    - "\\A\\s*#"    # long comments are fine
+
+Layout/MultilineMethodCallIndentation:
+  EnforcedStyle: indented
+
+Layout/FirstArrayElementIndentation:
+  EnforcedStyle: consistent
+
+Layout/FirstHashElementIndentation:
+  EnforcedStyle: consistent
+
+Layout/HashAlignment:
+  EnforcedHashRocketStyle: table
+  EnforcedColonStyle: table
+
+Layout/SpaceAroundOperators:
+  Enabled: true
+
+# ── Metrics ──────────────────────────────────────────────────────────────────
+
+Metrics/MethodLength:
+  Max: 30
+  Exclude:
+    - "spec/**/*"
+
+Metrics/AbcSize:
+  Max: 25
+  Exclude:
+    - "spec/**/*"
+
+Metrics/CyclomaticComplexity:
+  Max: 10
+
+Metrics/PerceivedComplexity:
+  Max: 10
+
+Metrics/ClassLength:
+  Max: 200
+  Exclude:
+    - "spec/**/*"
+
+Metrics/ModuleLength:
+  Max: 200
+  Exclude:
+    - "spec/**/*"
+
+Metrics/BlockLength:
+  Exclude:
+    - "spec/**/*"
+    - "lib/idempo/generators/**/*"
+
+# ── Naming ───────────────────────────────────────────────────────────────────
+
+Naming/FileName:
+  Enabled: true
+  ExpectMatchingDefinition: false
+
+Naming/MethodParameterName:
+  MinNameLength: 2
+  AllowedNames:
+    - e     # rescue => e
+    - io
+    - id
+    - db
+    - v     # block variables
+
+# ── Lint ─────────────────────────────────────────────────────────────────────
+
+Lint/UnusedMethodArgument:
+  Enabled: true
+  AllowUnusedKeywordArguments: false
+
+Lint/SuppressedException:
+  Enabled: true
+  AllowComments: true
+
+# ── Rails cops ───────────────────────────────────────────────────────────────
+
+Rails/Output:
+  Exclude:
+    - "lib/idempo/railtie.rb"   # rake task uses puts intentionally
+
+Rails/SkipsModelValidations:
+  Enabled: true
+  AllowedMethods:
+    - delete_all
+    - update_all
+    - upsert
+    - insert
+
+Rails/TimeZone:
+  Enabled: false   # gem has no opinion on host app time zone config
+
+Rails/Date:
+  Enabled: false
+
+# ── RSpec cops ───────────────────────────────────────────────────────────────
+
+RSpec/ExampleLength:
+  Max: 20
+
+RSpec/MultipleExpectations:
+  Max: 5
+
+RSpec/NestedGroups:
+  Max: 4
+
+RSpec/DescribeClass:
+  Enabled: false   # some top-level describe blocks are by feature
+
+RSpec/FilePath:
+  Enabled: false   # we don't mirror lib/ structure 1:1
+
+RSpec/ContextWording:
+  Prefixes:
+    - when
+    - with
+    - without
+    - and
+    - given
+    - for
+
+RSpec/LetSetup:
+  Enabled: true
+
+RSpec/ExpectChange:
+  EnforcedStyle: method_call
