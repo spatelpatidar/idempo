@@ -259,17 +259,20 @@ module Idempo
         say "  ⚙  Installing Idempo...", :green
         say ""
 
-        create_migration
+        generate_migration_file
         create_initializer
         print_next_steps
       end
 
-      def create_migration
+      def generate_migration_file
         say "  Creating migration...", :white
+        # Rails 7.1 changed migration_template — the third options hash was removed.
+        # Set @migration_version as an instance variable so the ERB template
+        # can access it directly via @migration_version.
+        @migration_version = migration_version
         migration_template(
           "create_idempotency_keys.rb.erb",
           "db/migrate/create_idempotency_keys.rb",
-          migration_version: migration_version,
         )
       end
 

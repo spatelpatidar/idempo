@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class CreateIdempotencyKeys < ActiveRecord::Migration<%= migration_version %>
+class CreateIdempotencyKeys < ActiveRecord::Migration<%= @migration_version %>
   def change
     create_table :idempotency_keys do |t|
       # The client-supplied idempotency key (e.g. a UUID).

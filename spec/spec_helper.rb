@@ -1,4 +1,11 @@
 # frozen_string_literal: true
+require 'simplecov'
+SimpleCov.start do
+  add_filter '/spec/'
+  add_filter 'lib/respondo/version.rb'
+  add_filter 'lib/respondo/railtie.rb'
+  track_files 'lib/**/*.rb'
+end
 
 # ── Gempath bootstrap (run via: bundle exec rspec) ─────────────────────────────
 require "active_support/all"
@@ -86,6 +93,7 @@ end
 
 # ── RSpec configuration ────────────────────────────────────────────────────────
 RSpec.configure do |config|
+  config.example_status_persistence_file_path = "spec/idempo.txt"
   config.expect_with(:rspec) { |c| c.include_chain_clauses_in_custom_matcher_descriptions = true }
   config.mock_with(:rspec)   { |c| c.verify_partial_doubles = true }
   config.shared_context_metadata_behavior = :apply_to_host_groups
